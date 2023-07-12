@@ -51,6 +51,8 @@ $ export AWS_SESSION_TOKEN=IQoJb3JpZ2luX2VjEJ3//////////wEaCXVzLWVhc3QtMSJHMEUCI
 
 * Download the tutorial content tarball and extract it.
 
+TODO: mgrigorov: Provide an updated ohpc-sc20-tutorial.tar.gz !
+
 ~~~console
 $ cd ~
 $ wget -c https://github.com/utdsimmons/sc2020/raw/master/ohpc-sc20-tutorial.tar.gz -O - | tar -xz
@@ -70,6 +72,8 @@ To do this, we will be using [Packer](https://www.packer.io/) from [Hashicorp](h
 
 *Note: The packer yaml and shell script needed to build the controller AMI is available in the tutorial tarball for your reference.*
 
+#### Build the compute AMI
+
 ~~~console
 $ cd ~/SC20/packer-templates/compute
 $ packer build compute.yml
@@ -86,15 +90,15 @@ $ packer build compute.yml
   },
   "builders": [{
     "type": "amazon-ebs",
-{% raw %}    "access_key": "{{user `aws_access_key`}}",
-    "secret_key": "{{user `aws_secret_key`}}", {% endraw %}
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
     "instance_type": "t3.micro",
-    "region": "us-east-1",
-    "source_ami": "ami-01ca03df4a6012157",
-    "ssh_username": "centos",
+    "region": "eu-north-1",
+    "source_ami": "ami-0d8da681c21f3581d",
+    "ssh_username": "openeuler",
     "ami_name": "openhpc-compute-{{timestamp}}",
     "launch_block_device_mappings": [
-    { 
+    {
       "device_name": "/dev/sda1",
       "volume_size": 10,
       "volume_type": "gp2",
@@ -105,7 +109,7 @@ $ packer build compute.yml
   "provisioners": [{
     "type": "shell",
     "script": "compute_packages.sh",
-{% raw %}    "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}" {% endraw %}
+    "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}"
   }]
 }
 ~~~
@@ -115,31 +119,114 @@ $ packer build compute.yml
 #!/bin/bash
 
 dnf -y update
-dnf -y config-manager --set-enabled PowerTools
-dnf -y install epel-release
-dnf -y install http://repos.openhpc.community/OpenHPC/2/CentOS_8/x86_64/ohpc-release-2-1.el8.x86_64.rpm
+sudo wget -O /etc/yum.repos.d/ohpc-oe-22.03.repo http://obs.openhpc.community:82/OpenHPC3:/3.0:/Factory/openEuler_22.03/OpenHPC3:3.0:Factory.repo 
 dnf -y install ohpc-base
 dnf -y install ohpc-release
 dnf -y install ohpc-slurm-client
 dnf -y install wget curl python3-pip jq git make nfs-utils libnfs
-dnf -y install zip multitail vim
+dnf -y install zip vim
 
 # adding for mpich support
 dnf -y install librdmacm libpsm2
 ~~~
 
-**Once your packer builder is done and you have recorded your compute node AMI, you may continue 
-to [Exercise 2](exercise2.html).**
+#### Build the controller AMI
 
-<details>
-<summary>Building the Controller AMI (optional)</summary>
-<pre>
-<code>
+~~~console
 $ export AWS_MAX_ATTEMPTS=60
 $ export AWS_POLL_DELAY_SECONDS=60
 $ cd ~/SC20/packer-templates/controller
 $ packer build controller.yml
-</code>
-</pre>
-</details>
+~~~
 
+##### controller.yaml
+~~~yaml
+{
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": ""
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "instance_type": "t3.micro",
+    "region": "eu-north-1",
+    "source_ami": "ami-0d8da681c21f3581d",
+    "ssh_username": "openeuler",
+    "ami_name": "openhpc-controller-{{timestamp}}",
+    "launch_block_device_mappings": [
+    {
+      "device_name": "/dev/sda1",
+      "volume_size": 170,
+      "volume_type": "gp2",
+      "delete_on_termination": true
+    }]
+  }],
+
+  "provisioners": [{
+    "type": "shell",
+    "script": "controller_packages.sh",
+    "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}"
+  }]
+}
+~~~
+
+##### controller_packages.sh
+~~~bash
+#!/bin/bash
+
+sudo wget -O /etc/yum.repos.d/ohpc-oe-22.03.repo http://obs.openhpc.community:82/OpenHPC3:/3.0:/Factory/openEuler_22.03/OpenHPC3:3.0:Factory.repo
+dnf -y update
+#dnf -y config-manager --set-enabled PowerTools
+#dnf -y install epel-release
+#dnf -y install http://repos.openhpc.community/OpenHPC/2/CentOS_8/x86_64/ohpc-release-2-1.el8.x86_64.rpm
+
+dnf -y install ohpc-base
+dnf -y install ohpc-release
+dnf -y install ohpc-slurm-server
+dnf -y install lmod-ohpc
+
+# dev packages
+dnf -y install ohpc-autotools
+dnf -y install EasyBuild-ohpc
+dnf -y install hwloc-ohpc
+dnf -y install spack-ohpc
+dnf -y install valgrind-ohpc
+
+# gnu12 serial/threaded packages
+dnf -y install ohpc-gnu12-serial-libs
+dnf -y install ohpc-gnu12-runtimes
+dnf -y install hdf5-gnu12-ohpc
+
+# install gnu12/mpich and gnu12/openmpi package variants
+dnf -y install openmpi4-gnu12-ohpc mpich-ofi-gnu12-ohpc mpich-ucx-gnu12-ohpc
+dnf -y install ohpc-gnu12-mpich* ohpc-gnu12-openmpi4*
+dnf -y install lmod-defaults-gnu12-mpich-ofi-ohpc
+dnf -y install wget curl python3-pip jq git make nfs-utils
+
+pip3 install awscli
+
+# basic utils and parallel python
+dnf -y install zip vim
+dnf -y install python3-mpi4py-gnu12-mpich-ohpc python3-mpi4py-gnu12-openmpi4-ohpc python3-numpy-gnu12-ohpc python3-scipy-gnu12-mpich-ohpc python3-scipy-gnu12-openmpi4-ohpc
+
+# grab podman and docker interface to run optional from scratch without docker locally
+dnf -y install podman-docker
+
+# increase S3 performance
+cat <<-EOF | install -D /dev/stdin /root/.aws/config
+[default]
+s3 =
+    max_concurrent_requests = 100
+    max_queue_size = 1000
+    multipart_threshold = 256MB
+    multipart_chunksize = 128MB
+EOF
+# prebake tutorial content
+# TODO: mgrigorov: Disabled because it is too big for the Free Tier AWS instance ... :-/
+# /usr/local/bin/aws s3 cp s3://ohpc-sc20-tutorial/ContainersHPC-v7.tar.gz - --no-sign-request | tar xz -C /home/openeuler
+~~~
+
+
+**Once your packer builder is done you may continue to [Exercise 2](exercise2.html).**
