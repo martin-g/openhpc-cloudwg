@@ -77,7 +77,7 @@ Note that this IAM user account has effectively unrestricted access to create/de
 
 (Applies to personal AWS cluster only; this instance is automatically spawned for EventEngine clusters)
 
-* Navigate to Services > EC2 > Instances > Launch Instances
+* Navigate to Services > Compute > EC2 > Instances > Launch Instances
 * Enter the openEuler 22.03 LTS SP1 AMI into the Search Box for your region 
 * Community AMIs > Select
 * Choose an Instance Type > t3.micro > Review and Launch > Launch
