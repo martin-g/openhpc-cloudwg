@@ -46,8 +46,6 @@ $ vim oe-22.03-slurm-x86_64.yml
 ~~~
 
 
-~~~
-
 Once you populate the AMI entries in the CloudFormation template, you are ready to deploy.
 
 
@@ -76,7 +74,7 @@ First, we need to get the hostname of our login node from the EC2 console:
 
 * Console > Services > Compute > EC2 > Instances  (running)
 * Right click Name=SlurmManagement > Connect > SSH client
-* Save the hostname to your clipboard (example: ec2-xx-xx-xx-xxx.compute-1.amazonaws.com)
+* Save the hostname to your clipboard (example: ec2-xx-xx-xx-xxx.compute.amazonaws.com)
 
 Now using your downloaded SSH private key and our login node host information, we can access our login node.
 
@@ -123,28 +121,28 @@ Once the job is done, we can check the output to make sure everything worked cor
 
 
 ~~~console
-[openeuler@ip-192-168-0-200 ~]$ cat job.2.out 
+[openeuler@ip-192-168-1-100 ~]$ cat job.2.out 
 [prun] Master compute host = ip-192-168-1-101
 [prun] Resource manager = slurm
 [prun] Launch cmd = mpiexec.hydra -bootstrap slurm ./a.out (family=mpich)
 
  Hello, world (16 procs total)
-    --> Process #   8 of  16 is alive. -> ip-192-168-1-102.us-east-1.compute.internal
-    --> Process #   9 of  16 is alive. -> ip-192-168-1-102.us-east-1.compute.internal
-    --> Process #  10 of  16 is alive. -> ip-192-168-1-102.us-east-1.compute.internal
-    --> Process #  11 of  16 is alive. -> ip-192-168-1-102.us-east-1.compute.internal
-    --> Process #  12 of  16 is alive. -> ip-192-168-1-102.us-east-1.compute.internal
-    --> Process #   0 of  16 is alive. -> ip-192-168-1-101.us-east-1.compute.internal
-    --> Process #  13 of  16 is alive. -> ip-192-168-1-102.us-east-1.compute.internal
-    --> Process #   1 of  16 is alive. -> ip-192-168-1-101.us-east-1.compute.internal
-    --> Process #  14 of  16 is alive. -> ip-192-168-1-102.us-east-1.compute.internal
-    --> Process #   4 of  16 is alive. -> ip-192-168-1-101.us-east-1.compute.internal
-    --> Process #  15 of  16 is alive. -> ip-192-168-1-102.us-east-1.compute.internal
-    --> Process #   5 of  16 is alive. -> ip-192-168-1-101.us-east-1.compute.internal
-    --> Process #   6 of  16 is alive. -> ip-192-168-1-101.us-east-1.compute.internal
-    --> Process #   7 of  16 is alive. -> ip-192-168-1-101.us-east-1.compute.internal
-    --> Process #   2 of  16 is alive. -> ip-192-168-1-101.us-east-1.compute.internal
-    --> Process #   3 of  16 is alive. -> ip-192-168-1-101.us-east-1.compute.internal
+    --> Process #   8 of  16 is alive. -> ip-192-168-1-102.eu-north-1.compute.internal
+    --> Process #   9 of  16 is alive. -> ip-192-168-1-102.eu-north-1.compute.internal
+    --> Process #  10 of  16 is alive. -> ip-192-168-1-102.eu-north-1.compute.internal
+    --> Process #  11 of  16 is alive. -> ip-192-168-1-102.eu-north-1.compute.internal
+    --> Process #  12 of  16 is alive. -> ip-192-168-1-102.eu-north-1.compute.internal
+    --> Process #   0 of  16 is alive. -> ip-192-168-1-101.eu-north-1.compute.internal
+    --> Process #  13 of  16 is alive. -> ip-192-168-1-102.eu-north-1.compute.internal
+    --> Process #   1 of  16 is alive. -> ip-192-168-1-101.eu-north-1.compute.internal
+    --> Process #  14 of  16 is alive. -> ip-192-168-1-102.eu-north-1.compute.internal
+    --> Process #   4 of  16 is alive. -> ip-192-168-1-101.eu-north-1.compute.internal
+    --> Process #  15 of  16 is alive. -> ip-192-168-1-102.eu-north-1.compute.internal
+    --> Process #   5 of  16 is alive. -> ip-192-168-1-101.eu-north-1.compute.internal
+    --> Process #   6 of  16 is alive. -> ip-192-168-1-101.eu-north-1.compute.internal
+    --> Process #   7 of  16 is alive. -> ip-192-168-1-101.eu-north-1.compute.internal
+    --> Process #   2 of  16 is alive. -> ip-192-168-1-101.eu-north-1.compute.internal
+    --> Process #   3 of  16 is alive. -> ip-192-168-1-101.eu-north-1.compute.internal
 [openeuler@ip-192-168-0-200 ~]$ 
 ~~~
 

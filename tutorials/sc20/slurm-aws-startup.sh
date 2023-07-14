@@ -17,12 +17,11 @@ function start_node()
     NODE_JSON=$(mktemp)
 
     aws ec2 run-instances --image-id $AWS_AMI \
-                          --instance-type t3.2xlarge \
+                          --instance-type t3.micro \
                           --key-name $AWS_KEYNAME \
                           --security-group-ids "$COMPUTE_SG" \
                           --subnet-id "$COMPUTE_SUBNET_ID" \
                           --private-ip-address $2 \
-                          --iam-instance-profile Name=$COMPUTE_PROFILE \
                           --user-data file://$SLURM_ROOT/slurm-compute-userdata.sh \
                           --region $SLURM_HEADNODE_AWS_REGION \
                           --block-device-mappings \
