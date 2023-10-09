@@ -21,7 +21,7 @@ Parameters:
   HeadAMI:
     Description: AMI to use for head node.
     Type: String
-    Default: ami-01d27129d21fa2bd7
+    Default: ami-059fd4adcc629cf66
 
 
   HeadInstanceType:
@@ -35,7 +35,7 @@ Parameters:
   LoginAMI:
     Description: AMI to use for login node.
     Type: String
-    Default: ami-04dbc2d4e6847d3b0
+    Default: ami-0a8ef62b4c1f9864f
 
   LoginInstanceType:
     Description: Instance type to be used for Slurm Headnode/Management Node.
@@ -48,7 +48,7 @@ Parameters:
   ComputeAMI:
     Description: AMI to use for compute nodes.
     Type: String
-    Default: ami-04dbc2d4e6847d3b0
+    Default: ami-0a8ef62b4c1f9864f
     
 Conditions:
 
@@ -327,11 +327,12 @@ Resources:
           sed -i "s|@KEYNAME@|${KeyName}|g" /etc/slurm/slurm-aws-startup.sh
           chmod +x /etc/slurm/slurm-aws-startup.sh
           chmod +x /etc/slurm/slurm-aws-shutdown.sh
-          systemctl start munge
           systemctl enable munge
+          systemctl start munge 
           cp /etc/munge/munge.key /home/.munge
-          systemctl start slurmctld
+          chmod a+rw /var/log
           systemctl enable slurmctld
+          systemctl start slurmctld
           cp /etc/slurm/slurm.conf /home/.slurmconf
           touch /etc/slurm/power_save.log
           chown slurm:slurm /etc/slurm/power_save.log
@@ -370,8 +371,8 @@ Resources:
           cp /home/.slurmconf /etc/slurm/slurm.conf
           cp /home/.munge /etc/munge/munge.key
           chown munge:munge /etc/munge/munge.key
+          systemctl enable munge          
           systemctl start munge
-          systemctl enable munge
 
 
 Outputs:

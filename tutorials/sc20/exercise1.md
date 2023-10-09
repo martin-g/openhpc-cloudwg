@@ -118,16 +118,16 @@ $ packer build compute.yml
 ~~~bash
 #!/bin/bash
 
-dnf -y update
-sudo wget -O /etc/yum.repos.d/ohpc-oe-22.03.repo http://obs.openhpc.community:82/OpenHPC3:/3.0:/Factory/openEuler_22.03/OpenHPC3:3.0:Factory.repo 
-dnf -y install ohpc-base
-dnf -y install ohpc-release
-dnf -y install ohpc-slurm-client
-dnf -y install wget curl python3-pip jq git make nfs-utils libnfs
-dnf -y install zip vim
+dnf install -y http://repos.openhpc.community/OpenHPC/3/openEuler_22.03/aarch64/ohpc-release-3-1.oe2203.aarch64.rpm
+dnf update -y 
+dnf install -y ohpc-base
+dnf install -y ohpc-release
+dnf install -y ohpc-slurm-client
+dnf install -y wget curl python3-pip jq git make nfs-utils libnfs
+dnf install -y zip vim
 
 # adding for mpich support
-dnf -y install librdmacm libpsm2
+dnf install -y librdmacm libpsm2
 ~~~
 
 #### Build the controller AMI
@@ -176,43 +176,40 @@ $ packer build controller.yml
 ~~~bash
 #!/bin/bash
 
-sudo wget -O /etc/yum.repos.d/ohpc-oe-22.03.repo http://obs.openhpc.community:82/OpenHPC3:/3.0:/Factory/openEuler_22.03/OpenHPC3:3.0:Factory.repo
-dnf -y update
-#dnf -y config-manager --set-enabled PowerTools
-#dnf -y install epel-release
-#dnf -y install http://repos.openhpc.community/OpenHPC/2/CentOS_8/x86_64/ohpc-release-2-1.el8.x86_64.rpm
+dnf install -y http://repos.openhpc.community/OpenHPC/3/openEuler_22.03/aarch64/ohpc-release-3-1.oe2203.aarch64.rpm
+dnf update -y 
 
-dnf -y install ohpc-base
-dnf -y install ohpc-release
-dnf -y install ohpc-slurm-server
-dnf -y install lmod-ohpc
+dnf install -y ohpc-base
+dnf install -y ohpc-release
+dnf install -y ohpc-slurm-server
+dnf install -y lmod-ohpc
 
 # dev packages
-dnf -y install ohpc-autotools
-dnf -y install EasyBuild-ohpc
-dnf -y install hwloc-ohpc
-dnf -y install spack-ohpc
-dnf -y install valgrind-ohpc
+dnf install -y ohpc-autotools
+dnf install -y EasyBuild-ohpc
+dnf install -y hwloc-ohpc
+dnf install -y spack-ohpc
+dnf install -y valgrind-ohpc
 
 # gnu12 serial/threaded packages
-dnf -y install ohpc-gnu12-serial-libs
-dnf -y install ohpc-gnu12-runtimes
-dnf -y install hdf5-gnu12-ohpc
+dnf install -y ohpc-gnu12-serial-libs
+dnf install -y ohpc-gnu12-runtimes
+dnf install -y hdf5-gnu12-ohpc
 
 # install gnu12/mpich and gnu12/openmpi package variants
-dnf -y install openmpi4-gnu12-ohpc mpich-ofi-gnu12-ohpc mpich-ucx-gnu12-ohpc
-dnf -y install ohpc-gnu12-mpich* ohpc-gnu12-openmpi4*
-dnf -y install lmod-defaults-gnu12-mpich-ofi-ohpc
-dnf -y install wget curl python3-pip jq git make nfs-utils
+dnf install -y openmpi4-gnu12-ohpc mpich-ofi-gnu12-ohpc mpich-ucx-gnu12-ohpc
+dnf install -y ohpc-gnu12-mpich* ohpc-gnu12-openmpi4*
+dnf install -y lmod-defaults-gnu12-mpich-ofi-ohpc
+dnf install -y wget curl python3-pip jq git make nfs-utils
 
 pip3 install awscli
 
 # basic utils and parallel python
-dnf -y install zip vim
-dnf -y install python3-mpi4py-gnu12-mpich-ohpc python3-mpi4py-gnu12-openmpi4-ohpc python3-numpy-gnu12-ohpc python3-scipy-gnu12-mpich-ohpc python3-scipy-gnu12-openmpi4-ohpc
+dnf install -y zip vim
+dnf install -y python3-mpi4py-gnu12-mpich-ohpc python3-mpi4py-gnu12-openmpi4-ohpc python3-numpy-gnu12-ohpc python3-scipy-gnu12-mpich-ohpc python3-scipy-gnu12-openmpi4-ohpc
 
 # grab podman and docker interface to run optional from scratch without docker locally
-dnf -y install podman-docker
+dnf install -y podman-docker
 
 # increase S3 performance
 cat <<-EOF | install -D /dev/stdin /root/.aws/config
