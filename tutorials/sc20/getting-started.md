@@ -77,11 +77,10 @@ Note that this IAM user account has effectively unrestricted access to create/de
 
 (Applies to personal AWS cluster only; this instance is automatically spawned for EventEngine clusters)
 
-* Navigate to Services > EC2 > Instances > Launch Instances
-* Enter the CentOS 8.2 AMI into the Search Box for your region from the [Official and current CentOS Public Images
-](https://wiki.centos.org/Cloud/AWS) page
+* Navigate to Services > Compute > EC2 > Instances > Launch Instances
+* Enter the openEuler 22.03 LTS SP1 AMI into the Search Box for your region 
 * Community AMIs > Select
-* Choose an Instance Type > t2.micro > Review and Launch > Launch
+* Choose an Instance Type > t3.micro > Review and Launch > Launch
 * Create a new key pair > packer-sc20 > Download key pair > Launch Instances > View Instances
 * Once the status checks pass, right click the instance > Connect > SSH client > copy Public DNS
 * Connect to instance using your packer-SC20.pem SSH key
@@ -89,7 +88,7 @@ Note that this IAM user account has effectively unrestricted access to create/de
 ```console
 $ cp ~/Downloads/packer-sc20.pem .
 $ chmod 400 packer-sc20.pem
-$ ssh -i "packer-sc20.pem" centos@ec2-xx-xxx-x-xxx.us-xxxx-x.compute.amazonaws.com
+$ ssh -i "packer-sc20.pem" openeuler@ec2-xx-xxx-x-xxx.us-xxxx-x.compute.amazonaws.com
 ```
 
 
@@ -100,7 +99,8 @@ You will need to set these API keys each time you log in to this instance.
 
 ~~~console
 
-$ sudo dnf -y install python36 wget zip 
+$ sudo dnf -y update
+$ sudo dnf install -y tar vim
 $ pip3 install --user awscli
 
 ~~~
@@ -110,8 +110,9 @@ Finally, we need to download and install [Packer](https://www.packer.io/) from [
 ~~~console
 
 $ mkdir ~/bin && cd ~/bin
-$ wget https://releases.hashicorp.com/packer/1.6.0/packer_1.6.0_linux_amd64.zip 
-$ unzip packer_1.6.0_linux_amd64.zip
+$ wget https://releases.hashicorp.com/packer/1.9.1/packer_1.9.1_linux_amd64.zip
+$ unzip packer_1.9.1_linux_amd64.zip
+$ rm -f packer_1.9.1_linux_amd64.zip
 
 ~~~
 
